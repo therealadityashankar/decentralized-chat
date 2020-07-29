@@ -1,0 +1,30 @@
+.p2{
+    overflow: hidden;
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+.p2 .camera-screen{
+    background: #cccccc;
+    border-radius: 10px;
+}
+
+.p2 .code-entry{
+    background: gray;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    width: 300px;
+}
+
+.p2 .get-chatee{
+    background: gray;
+    color: white;
+    text-decoration: none;
+    padding: 4px;
+    border-radius: 5px;
+}

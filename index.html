@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script src="/wc-router/src/index.js" charset="utf-8" type="module"></script>
+    <link rel="stylesheet" href="/src/index.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+    <script src="/src/index.js" charset="utf-8" type="module"></script>
+    <script src="https://unpkg.com/qrcode@1.4.4/build/qrcode.min.js" charset="utf-8"></script>
+    <title>chat</title>
+  </head>
+  <body>
+    <wc-router>
+      <wc-route path="/" file="/src/pages/main/main.html"></wc-route>
+      <wc-route path="/add-chatee" file="/src/pages/add-chatee/index.html"></wc-route>
+    </wc-router>
+  </body>
+</html>
