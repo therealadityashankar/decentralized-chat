@@ -1,0 +1,32 @@
+.margin-top-big{margin-top: 60px;}
+.margin-bottom-big{margin-bottom: 60px;}
+.margin-vertical-big{margin-top: 60px; margin-bottom: 60px;}
+
+.center-hv{
+    position: absolute;
+    left : 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.text-center{
+    text-align: center;
+}
+
+.border-radius-10{
+    border-radius: 10px;
+}
+
+.border-radius-10-left{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.border-radius-10-right{
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.background-white{
+    background: white;
+}

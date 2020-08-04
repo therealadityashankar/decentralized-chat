@@ -1,0 +1,11 @@
+.r-a-big-green{
+    background: #30a430;
+    color: white;
+    text-decoration: none;
+    padding: 13px;
+    border-radius: 27px;
+}
+
+.r-a-big-green:hover{
+    background: #3bac3b;
+}
