@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <script type="module" src="https://cdn.jsdelivr.net/gh/vanillawc/wc-router@2/src/index.js"></script>
+    <script type="module" src="https://ghcdn.rawgit.org/vanillawc/wc-router/v2.2.3/src/index.js"></script>
+    <script type="text/javascript" src="/src/p2pt.umd.min.js"></script>
     <link rel="stylesheet" href="/src/index.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
     <script src="/src/index.js" charset="utf-8" type="module"></script>
@@ -12,8 +13,11 @@
   </head>
   <body>
     <wc-router>
-      <wc-route path="/" file="/src/pages/main/main.html"></wc-route>
-      <wc-route path="/add-chatee" file="/src/pages/add-chatee/index.html"></wc-route>
+      <wc-route-base file="/src/base.html">
+        <wc-route path="/" file="/src/pages/show-qr/index.html"></wc-route>
+        <wc-route path="/add-qr" file="/src/pages/add-qr/index.html"></wc-route>
+        <wc-route path="/edit-user/:username"></wc-route>
+      </wc-route-base>
     </wc-router>
   </body>
 </html>
