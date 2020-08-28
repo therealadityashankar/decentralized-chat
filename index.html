@@ -3,20 +3,26 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <script type="module" src="https://ghcdn.rawgit.org/vanillawc/wc-router/v2.2.3/src/index.js"></script>
-    <script type="text/javascript" src="/src/p2pt.umd.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/vanillawc/wc-router@2.2.4/src/index.js"></script>
+    <script type="text/javascript" src="/src/external/p2pt.umd.min.js"></script>
     <link rel="stylesheet" href="/src/index.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
     <script src="/src/index.js" charset="utf-8" type="module"></script>
-    <script src="https://unpkg.com/qrcode@1.4.4/build/qrcode.min.js" charset="utf-8"></script>
+    <script src="/src/external/qrcode.min.js" charset="utf-8"></script>
+    <script src="/src/external/localforage/localforage.min.js" charset="utf-8"></script>
     <title>chat</title>
   </head>
   <body>
     <wc-router>
       <wc-route-base file="/src/base.html">
-        <wc-route path="/" file="/src/pages/show-qr/index.html"></wc-route>
-        <wc-route path="/add-qr" file="/src/pages/add-qr/index.html"></wc-route>
-        <wc-route path="/edit-user/:username"></wc-route>
+        <wc-route path="/"
+                  file="/src/pages/list-friends/index.html"></wc-route>
+        <wc-route path="/show-qr" 
+                  file="/src/pages/show-qr/index.html"></wc-route>
+        <wc-route path="/add-qr" 
+                  file="/src/pages/add-qr/index.html"></wc-route>
+        <wc-route path="/edit-friend/:uuid"
+                  file="/src/pages/edit-friend/index.html"></wc-route>
+        <wc-route path="/path:catchAll">404, page not found</wc-route>
       </wc-route-base>
     </wc-router>
   </body>

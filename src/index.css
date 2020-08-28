@@ -2,13 +2,14 @@
 @import url('./css/buttons.css');
 @import url('./css/input.css');
 @import url('./css/utility.css');
+@import url('./pages/list-friends/index.css');
 
 html, body{
   width: 100%;
   height: 100%;
   padding: 0;
   margin: 0;
-  font-family: 'Quicksand', sans-serif;
+  font-family: sans-serif;
   color: var(--color-4);
 }
 
@@ -22,21 +23,12 @@ html, body{
   color: var(--color-4);
 }
 
-#app-contacts{
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 50px;
-  height: 100%;
-  background: var(--color-2);
-}
-
 #app-page{
   position: absolute;
-  left: 50px;
+  left: 0;
   top: 50px;
-  width: calc(100% - 50px);
-  height: 100%;
+  width: 100%;
+  height: calc(100% - 50px);
 }
 
 #app-add-contact-btn{
@@ -55,15 +47,15 @@ html, body{
   text-align: center;
   padding: 0;
   margin: 0 auto;
-  margin-top: -10px;
+  margin-top: -5px;
   user-select: none;
 }
 
 #app-top-bar{
   position: absolute;
-  left: 50px;
+  left: 0;
   top: 0;
-  width: calc(100% - 50px);
+  width: 100%;
   height: 50px;
   background: var(--color-3);
 }
@@ -78,3 +70,21 @@ html, body{
     height: 40px;
     background: gray;
 }
+
+#app-top-bar .user-name{
+    color: var(--color-4);
+    padding: 0;
+    margin: 0;
+    height: 50px;
+    line-height: 50px;
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+#app-top-bar .go-back{
+    margin-left: 20px;
+    cursor: pointer;
+}
+

@@ -1,0 +1,45 @@
+wc-route[path="/"] .add-friends {
+	background: var(--color-6);
+	display: initial;
+	padding: 3px 9px;
+	font-size: 35px;
+	border-radius: 25px;
+	position: absolute;
+	bottom: 30px;
+	right: 30px;
+	box-shadow: 0px 0px 24px -1px var(--color-6);
+	color: white;
+	text-decoration: none;
+	border: 1px solid var(--color-6);
+}
+
+.friend{
+    margin : 15px;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.friend-details{
+    display: inline-block; 
+    vertical-align: top;
+}
+
+.friend-name{
+    display: block;
+    margin-bottom: 3px;
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100vw - 120px);
+    font-size: 17px;
+}
+
+.friend-last-message{
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100vw - 120px);
+    font-size: 13px;
+}

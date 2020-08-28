@@ -30,3 +30,7 @@
 .background-white{
     background: white;
 }
+
+.invisible{
+    display: none;
+}

@@ -1,54 +1,90 @@
 import User from "./user.js"
+import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
 
 /**
  * a class to manage users data via localstorage
  */
-export default class UserManager{
-  constructor(){
-    this.users = {}
-    this.currentUser = undefined;
-  }
-
-  get count(){
-    return Object.keys(this.users).length
-  }
-
+export default class UserManager extends EventTarget{
   /**
-   * add a user
-   *
-   * @param {User} user - see "./user.js" for the user class
+   * @param {string} opts.storageName - this name will be used for creating a localstorage instance
+   * @param {string} [opts.storePrefix=""] - all usermanager related data will be prefixed with this
    */
-  add(user){
-    this.users[user.name] = user
+  constructor({storageName, storePrefix=""}){
+    super()
+    this.storageName = storageName
+    this.storePrefix = storePrefix
+    this.storage = localforage.createInstance({name:storageName, storeName: (storePrefix + "main")})
   }
 
-  /**
-   * get the user from its name
-   *
-   * @param {string} name
-   * @returns {User}
-   */
-  get(name){
-    return this.users[name]
+  async getS(varName){
+    return await this.storage.getItem(varName)
   }
+
+  async setS(varName, value){
+    return await this.storage.setItem(varName, value)
+  }
+  
+  /**
+   * add a user, and returns the added user, this user IS added to storage
+   * @returns {User} - see "./user.js" for the User class
+   */
+  async addUser(){
+    const uuid = uuidv4()
+    const storageName = this.storageName
+    const storePrefix = this.storePrefix + "user-" + uuid
+    const user = new User({storageName, storePrefix, uuid});
+    const userUUIDs = (await this.getS('user-uuids'))||[]
+
+    userUUIDs.push(user.uuid)
+    await this.setS("user-uuids", userUUIDs)
+
+    return user
+  }
+
 
   /**
    * set the current user
+   * emits an event 'currentUserChange'
    *
    * @param {User} user - see "./user.js" for the user class
    */
-  setCurrentUser(user){
-    this.currentUser = user
+  async setCurrentUser(user){
+    await this.storage.setItem("current-user-uuid", user.uuid)
+
+    const event = {
+      detail : {
+        currentUser: user,
+        manager: this
+      }
+    }
+
+    this.dispatchEvent(new CustomEvent('currentUserChange', event))
+  }
+
+  getUser(uuid){
+    const storageName = this.storageName
+    const storePrefix = this.storePrefix + "user-" + uuid
+    return new User({storageName, storePrefix, uuid})
+  }
+
+  async getCurrentUser(){
+    const currentUserUUID = await this.storage.getItem("current-user-uuid")
+
+    if(currentUserUUID === null) return
+
+    return this.getUser(currentUserUUID)
   }
 
   /**
    * creates a default user if needed, i.e. there are no users
+   * sets the last user that was here before the window was closed if there
+   * is are existing users
    */
-  createDefaultUser(){
-    if(this.count === 0){
-      const user = new User("Unnamed user")
-      this.add(user)
-      this.setCurrentUser(user)
+  async createDefaultUserIfNeeded(){
+    const users = await this.getS("user-uuids")||{}
+    const userCount = Object.keys(users).length
+    if(userCount === 0){
+      await this.setCurrentUser(await this.addUser())
     }
   }
 }

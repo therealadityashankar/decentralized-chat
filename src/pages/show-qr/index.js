@@ -1,15 +1,10 @@
-import Friend from "../../friend.js"
+import * as encryption from "../../encryption.js"
 
 async function setQRImageAndText(wcroute){
-  const user = window.userManager.currentUser
-  const friend = await Friend.create()
-  friend.initCommunication({user})
-  console.log(friend)
-
-  const jwk = await crypto.subtle.exportKey("jwk", friend.communicationKey)
-  const qrDataRaw = JSON.stringify({trackerID:friend.trackerID, jwk})
-  const qrData = globalThis.btoa(qrDataRaw)
-  const qrImgStr = await QRCode.toDataURL(qrData)
+  const trackerID = encryption.generateSecureRandomString(10)
+  const password = encryption.generateSecureRandomString(10)
+  const qrData = globalThis.btoa(trackerID + ":" +  password)
+  const qrImgStr = await QRCode.toDataURL(qrData, {errorCorrectionLevel: 'L'})
   const chatInit = wcroute.querySelector(".chat-init")
   const img = chatInit.querySelector(".chat-init-qr")
   img.src = qrImgStr
@@ -19,7 +14,6 @@ async function setQRImageAndText(wcroute){
 
   const inputCopyBtn = chatInit.querySelector(".chat-init-str-copy")
   inputCopyBtn.addEventListener("click", e => navigator.clipboard.writeText(input.value))
-
 }
 
 export async function load(wcroute){

@@ -36,9 +36,16 @@ const handleJoining = route => {
   const joinBtn = route.querySelector(".p2-joining input[type='button']")
 
   joinBtn.addEventListener('click', async e => {
-    const details = JSON.parse(window.atob(joinInp.value))
-    const communicationKey = await window.crypto.subtle.importKey("jwk", details.jwk, {name:"AES-GCM", length:256}, true, ["encrypt", "decrypt"])
-    const friend = await Friend.create({trackerID:details.trackerID, communicationKey})
+    const details = window.atob(joinInp.value)
+    const [trackerID, password] = details.split(":")
+    const friend = await userManager
+                         .currentUser
+                         .createFriend({trackerID, password})
+
     friend.initCommunication()
+    friend.addEventListener("initialized", e => {
+      console.log("initialized")
+      //wcrouter.route("/edit-friend/" + e.detail.friend.uuid)
+    })
   })
 }

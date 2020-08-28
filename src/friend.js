@@ -1,85 +1,87 @@
-import random from "https://ghcdn.rawgit.org/therealadityashankar/imageolive/v0.1.0/random.js";
+import * as encryption from "./encryption.js"
 
 /**
  * a friend class to manage/communicate with other users
+ *
+ * you need to set the 'password' in storage for this to be really useful
  */
-export default class Friend{
-  constructor(){
-    this.trackerID=""
-    this.name=""
-    this.communicationKey=""
+export default class Friend extends EventTarget{
+  async init({storageName, storePrefix, uuid}){
+    this.uuid = uuid
+    this.storageName = storageName
+    this.storePrefix = storePrefix
+    this.storage = localforage.createInstance({name: storageName, 
+                                               storeName: storePrefix + "-main"})
     this.p2pt = undefined
+    return this
+  }
+
+  async getS(varName){
+    return await this.storage.get(varName)
+  }
+
+  async setS(varName, value){
+    return await this.storage.set(varName)
   }
 
   /**
-   * add a friend
+   * @param {Object} info - unlike p2pt, this HAS TO BE an string, objects are not allowed
    */
-  static async create(opts={}){
-    const friend = new Friend()
-
-    friend.trackerID = opts.trackerID||this._generateRandomID()
-    friend.name = opts.name
-    friend.communicationKey = opts.communicationKey
-    if(!friend.communicationKey) await friend.setNewRandomSharedKey()
-    return friend
+  async send(info){
+    if(!(typeof info === "string")) throw Error("chat: data send MUST be a string");
+    this._sendType("external", {info})
   }
 
   /**
-   * set a new randomized shared key
+   * internally used function, send a specific type of operation
+   * data is sent encrypted
    */
-  async setNewRandomSharedKey(){
-    const algo = {name: "AES-GCM", length:256}
-    this.communicationKey = await window
-                                    .crypto
-                                    .subtle
-                                    .generateKey(algo, true, ["encrypt", "decrypt"])
-  }
-
-  static _generateRandomID(){
-    let trackerID = ""
-    let usableCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
-
-    for(var i=0; i<32; i++){
-      const num = random.randint(0, usableCharacters.length - 1)
-      trackerID += usableCharacters[num]
-    }
-
-    return trackerID
+  async _sendType(type, info){
+    const toSend = {type, data:info}
+    const stringifyed = JSON.stringify(toSend)
+    const encrypted = await this.encrypt(stringifyed)
+    this.p2pt.send(this.peer, encrypted)
   }
 
   /**
-   * initiate communication
+   * encrypt a string, with the shared key
    *
-   * @param {User} user - User object from "./user.js", this friend object will automatically be added to the user upon a successful connection
-   * @param {function} [connectionCallback] - this callback will be called upon successfully connecting with the user
+   * @param {string} info
+   * @returns {string} the encrypted data
    */
-  initCommunication({user, connectionCallback=null}){
-    const trackersAnnounceURLs = [
-      "wss://tracker.openwebtorrent.com",
-      "wss://tracker.sloppyta.co:443/announce",
-      "wss://tracker.novage.com.ua:443/announce",
-      "wss://tracker.btorrent.xyz:443/announce",
-    ]
+  async encrypt(info){
+    return await encryption.encrypt(info, await this.getS('password'))
+  }
 
-    this.p2pt = new P2PT(trackersAnnounceURLs, this.trackerID)
+  /**
+   * decrypt a string, with the shared key
+   *
+   * @param {string} encInfo - the encrypted data
+   * @returns {string} the decrypted data
+   */
+  async decrypt(encInfo){
+    return await encryption.decrypt(encInfo, await this.getS('password'))
+  }
 
-    this.p2pt.on('trackerconnect', (tracker, stats) => {
-      console.log('Connected to tracker : ' + tracker.announceUrl)
-      console.log('Tracker stats : ' + JSON.stringify(stats))
-    })
-
+  _getPeerOnConnect(){
     this.p2pt.on('peerconnect', peer => {
-      this.p2pt.send(peer, "Hi!")
-
-      user.addFriend(this);
-      if(connectionCallback) connectionCallback(this)
+      this.peer = peer
+      this.dispatchEvent(new CustomEvent('peer-retrieved'))
     })
+  }
 
-    this.p2pt.on('msg', (peer, msg) => {
-      console.log("recieved :", msg)
+  _addMsgEventHandler(){
+    this.p2pt.on('msg', async (peer, msg) => {
+      const decryptedMessage = await this.decrypt(msg)
+      const parsed = JSON.parse(decryptedMessage)
+
+      if(parsed.type === "external"){
+        const event = {detail: {msg:parsed.data}}
+        this.dispatchEvent(new CustomEvent("msg", event))
+
+      } else if(parsed.type === "init-detail-change"){
+        this.name = parsed.data.details.name 
+      }
     })
-
-
-    this.p2pt.start()
   }
 }
